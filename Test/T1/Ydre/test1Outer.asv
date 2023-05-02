@@ -1,0 +1,64 @@
+%Der er 10 ms mellem hver sampling
+clc
+clear all
+close all
+
+load('dataYdre.mat');
+
+
+n=length(dataYdre);
+for i = 1:n
+    tid(i) = 0.01 * i;
+end
+
+
+
+plot(dataYdre-mean(dataYdre));
+
+
+%%
+
+data(:,1)=dataYdre(1:6100);
+data(:,2)=dataYdre(6101:12200);
+data(:,3)=dataYdre(12200:18300);
+data(:,4)=dataYdre(18301:20400);
+data(:,5)=dataYdre(20401:22500);
+data(:,6)=dataYdre(22501:24600);
+data(:,7)=dataYdre(24601:26600);
+data(:,8)=dataYdre(24701:26700);
+data(:,9)=dataYdre(26701:28700);
+data(:,10)=dataYdre(28701:30700);
+
+for i = 1:10
+    for ii=1:1998
+        dataFilt(ii+2,i)=(data(ii,i)+data(ii+1,i)+data(ii+2,i))/3;
+    end
+end
+
+
+temp = zeros(10);
+
+
+for i=1:10
+    for ii=1001:2000
+        temp(i) = temp(i) + dataFilt(ii,i);
+    end
+end
+
+offset = temp/1000;
+
+for i=1:10
+    figure(i);
+    plot(tid,dataFilt(:,i)-offset(i));
+    a=sprintf('State space regulator T.2 hop %d',i);
+    title(a)
+    ylabel("Vinkel [rad]");
+    xlabel("Tid [s]");
+    yline(0.0175);
+    yline(-0.0175);
+end
+
+
+
+%plot(data);
+
